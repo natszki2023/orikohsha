@@ -42,11 +42,16 @@ header .back:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 .field>label.lbl{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;margin-bottom:12px}
 .req{font-size:10px;letter-spacing:.08em;color:#fff;background:var(--accent);border-radius:3px;padding:2px 7px;font-weight:400}
 .opt{font-size:10px;letter-spacing:.08em;color:var(--sub);border:1px solid var(--line);border-radius:3px;padding:2px 7px}
-input[type=text],input[type=tel],input[type=email],input[type=date],textarea,select{
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=datetime-local],textarea,select{
   width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--paper);
   border:1px solid var(--line);border-radius:6px;padding:13px 14px;transition:.2s}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(110,163,174,.15)}
 textarea{resize:vertical;min-height:110px;line-height:1.8}
+.datetime-wrap{max-width:320px}
+.datetime-wrap input[type=datetime-local]{cursor:pointer}
+.datetime-grid{display:grid;grid-template-columns:1fr 180px;gap:12px;align-items:end}
+.datetime-grid select{cursor:pointer}
+@media(max-width:560px){.datetime-grid{grid-template-columns:1fr}}
 .hint{font-size:11.5px;color:var(--sub);margin-top:7px;line-height:1.7}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .star-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -72,8 +77,6 @@ textarea{resize:vertical;min-height:110px;line-height:1.8}
 .agree{display:flex;align-items:flex-start;gap:12px;margin-top:24px;padding:18px 20px;background:var(--soft);border-radius:8px;font-size:14px;cursor:pointer}
 .agree input{accent-color:var(--accent);width:19px;height:19px;margin-top:2px;flex:0 0 auto}
 /* submit */
-.square-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:11px 16px;border:1px solid var(--accent);border-radius:999px;background:var(--soft);color:var(--accent);text-decoration:none;font-size:13px;font-weight:500;transition:.2s}
-.square-link:hover{background:var(--accent);color:#fff}
 .submit-wrap{text-align:center;margin-top:46px}
 button.submit{font-family:"Noto Sans JP",sans-serif;font-size:15px;letter-spacing:.14em;color:#fff;background:var(--ink);border:none;border-radius:34px;padding:18px 64px;cursor:pointer;transition:.3s}
 button.submit:hover{background:var(--accent)}
@@ -173,9 +176,34 @@ footer a{color:#cfc8bd;text-decoration:none}
     </div>
   </div>
 
-  <!-- 3. オプション・アンケート -->
+  <!-- 3. 希望日時 -->
   <div class="fsec">
-    <div class="fsec-head"><span class="no">03</span><h2>オプション・アンケート</h2></div>
+    <div class="fsec-head"><span class="no">03</span><h2>希望日時</h2></div>
+    <div class="field">
+      <label class="lbl" for="appointment_date">ご希望日時 <span class="req">必須</span></label>
+      <div class="datetime-grid">
+        <div>
+          <label class="lbl" for="appointment_date" style="font-size:12px;margin-bottom:8px">日付</label>
+          <input type="date" id="appointment_date" name="appointment_date" required>
+        </div>
+        <div>
+          <label class="lbl" for="appointment_time" style="font-size:12px;margin-bottom:8px">時間</label>
+          <select id="appointment_time" name="appointment_time" required>
+            <option value="">選択してください</option>
+            <option value="10:00">10:00</option>
+            <option value="14:00">14:00</option>
+            <option value="16:00">16:00</option>
+          </select>
+        </div>
+      </div>
+      <input type="hidden" id="appointment_datetime" name="appointment_datetime">
+      <p class="hint">ご希望の撮影日と時間をご選択ください。<br>選べる時間は 10:00 / 14:00 / 16:00 です。空き状況を確認のうえ、担当者よりご連絡いたします。</p>
+    </div>
+  </div>
+
+  <!-- 4. オプション・アンケート -->
+  <div class="fsec">
+    <div class="fsec-head"><span class="no">04</span><h2>オプション・アンケート</h2></div>
 
     <div class="field">
       <label class="lbl">ご撮影対象の追加（ソロショットをご希望のお子様など） <span class="opt">任意</span></label>
@@ -194,13 +222,6 @@ footer a{color:#cfc8bd;text-decoration:none}
         <label class="choice has-input"><input type="radio" name="transport" value="タクシーまたは公共交通機関">タクシー／公共交通機関</label>
         <label class="choice has-input"><input type="radio" name="transport" value="徒歩">徒歩</label>
       </div>
-    </div>
-
-    <div class="field">
-      <label class="lbl" for="appointment_datetime">予約日時（Squareカレンダーで選択）<span class="req">必須</span></label>
-      <a href="https://app.squareup.com/appointments/book/nmr4gu3s0bmnea/LSXD6QN900Q5B/start" class="square-link" target="_blank" rel="noopener noreferrer">Square予約カレンダーを開く</a>
-      <input type="text" id="appointment_datetime" name="appointment_datetime" placeholder="例：2026/07/10 14:00" required>
-      <p class="hint">Squareの予約カレンダーで空いている日時を選択し、その日時をご入力ください。<br>選択後はこの画面に戻って入力をお願いします。</p>
     </div>
 
     <div class="field">
@@ -223,9 +244,9 @@ footer a{color:#cfc8bd;text-decoration:none}
     </div>
   </div>
 
-  <!-- 4. 大切なご案内 -->
+  <!-- 5. 大切なご案内 -->
   <div class="fsec">
-    <div class="fsec-head"><span class="no">04</span><h2>ご撮影に関する大切なご案内</h2></div>
+    <div class="fsec-head"><span class="no">05</span><h2>ご撮影に関する大切なご案内</h2></div>
     <div class="notice">
       <div class="notice-item">
         <span class="notice-ico"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h1.6l1-1.6a1 1 0 0 1 .85-.4h5.1a1 1 0 0 1 .85.4l1 1.6H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.4"/></svg></span>
@@ -278,7 +299,6 @@ footer a{color:#cfc8bd;text-decoration:none}
 </footer>
 
 <script>
-// show alert from query (?sent=1 / ?error=1) without inline server logic
 (function(){
   var q=new URLSearchParams(location.search), slot=document.getElementById('alertSlot');
   if(q.get('sent')==='1'){
@@ -288,6 +308,35 @@ footer a{color:#cfc8bd;text-decoration:none}
   } else if(q.get('error')==='1'){
     slot.innerHTML='<div class="alert ng">必須項目が未入力か、メールアドレスの形式に誤りがあります。お手数ですが内容をご確認の上、再度送信してください。</div>';
   }
+})();
+
+(function(){
+  var form=document.getElementById('reserveForm');
+  var dateInput=document.getElementById('appointment_date');
+  var timeSelect=document.getElementById('appointment_time');
+  var hiddenInput=document.getElementById('appointment_datetime');
+  if(!form || !dateInput || !timeSelect || !hiddenInput) return;
+
+  var today=new Date();
+  var yyyy=today.getFullYear();
+  var mm=String(today.getMonth()+1).padStart(2,'0');
+  var dd=String(today.getDate()).padStart(2,'0');
+  dateInput.min=yyyy+'-'+mm+'-'+dd;
+
+  function syncAppointmentValue(){
+    hiddenInput.value = dateInput.value && timeSelect.value ? dateInput.value + ' ' + timeSelect.value : '';
+  }
+
+  dateInput.addEventListener('change', syncAppointmentValue);
+  timeSelect.addEventListener('change', syncAppointmentValue);
+
+  form.addEventListener('submit', function(e){
+    syncAppointmentValue();
+    if(!hiddenInput.value){
+      e.preventDefault();
+      alert('ご希望日時を選択してください。');
+    }
+  });
 })();
 </script>
 </body>

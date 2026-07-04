@@ -43,10 +43,11 @@ $b .= '性別　　　　　　　： ' . p('star_gender') . $nl;
 $b .= 'お誕生日　　　　　： ' . p('star_birthday') . $nl;
 $b .= '好きなキャラクター： ' . p('star_character') . $nl . $nl;
 
+$b .= '■ 希望日時' . $nl . $line . $nl;
+$b .= 'ご希望日時　　　： ' . p('appointment_datetime') . $nl . $nl;
 $b .= '■ オプション・アンケート' . $nl . $line . $nl;
 $b .= '撮影対象の追加　： ' . p('option_add') . $nl;
 $b .= 'ご移動手段　　　： ' . p('transport') . $nl;
-$b .= '予約日時　　　　： ' . p('appointment_datetime') . $nl;
 $b .= 'きっかけ　　　　： ' . p('source') . $nl;
 $b .= 'ご質問・ご要望　：' . $nl . p('message') . $nl . $nl;
 
