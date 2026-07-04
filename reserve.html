@@ -72,6 +72,8 @@ textarea{resize:vertical;min-height:110px;line-height:1.8}
 .agree{display:flex;align-items:flex-start;gap:12px;margin-top:24px;padding:18px 20px;background:var(--soft);border-radius:8px;font-size:14px;cursor:pointer}
 .agree input{accent-color:var(--accent);width:19px;height:19px;margin-top:2px;flex:0 0 auto}
 /* submit */
+.square-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:11px 16px;border:1px solid var(--accent);border-radius:999px;background:var(--soft);color:var(--accent);text-decoration:none;font-size:13px;font-weight:500;transition:.2s}
+.square-link:hover{background:var(--accent);color:#fff}
 .submit-wrap{text-align:center;margin-top:46px}
 button.submit{font-family:"Noto Sans JP",sans-serif;font-size:15px;letter-spacing:.14em;color:#fff;background:var(--ink);border:none;border-radius:34px;padding:18px 64px;cursor:pointer;transition:.3s}
 button.submit:hover{background:var(--accent)}
@@ -192,6 +194,13 @@ footer a{color:#cfc8bd;text-decoration:none}
         <label class="choice has-input"><input type="radio" name="transport" value="タクシーまたは公共交通機関">タクシー／公共交通機関</label>
         <label class="choice has-input"><input type="radio" name="transport" value="徒歩">徒歩</label>
       </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl" for="appointment_datetime">予約日時（Squareカレンダーで選択）<span class="req">必須</span></label>
+      <a href="https://app.squareup.com/appointments/book/nmr4gu3s0bmnea/LSXD6QN900Q5B/start" class="square-link" target="_blank" rel="noopener noreferrer">Square予約カレンダーを開く</a>
+      <input type="text" id="appointment_datetime" name="appointment_datetime" placeholder="例：2026/07/10 14:00" required>
+      <p class="hint">Squareの予約カレンダーで空いている日時を選択し、その日時をご入力ください。<br>選択後はこの画面に戻って入力をお願いします。</p>
     </div>
 
     <div class="field">

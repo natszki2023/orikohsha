@@ -14,7 +14,7 @@ $to      = 'contact@orikohsha.jp';
 $from    = 'contact@orikohsha.jp';        // 送信元（同一ドメイン＝到達性◎）
 
 /* 必須チェック */
-$required = ['name_kanji','name_kana','zip','address','tel','email','star_name','source','agree'];
+$required = ['name_kanji','name_kana','zip','address','tel','email','star_name','appointment_datetime','source','agree'];
 $ok = true;
 foreach ($required as $r) { if (p($r) === '') { $ok = false; break; } }
 if (!filter_var(p('email'), FILTER_VALIDATE_EMAIL)) { $ok = false; }
@@ -46,6 +46,7 @@ $b .= '好きなキャラクター： ' . p('star_character') . $nl . $nl;
 $b .= '■ オプション・アンケート' . $nl . $line . $nl;
 $b .= '撮影対象の追加　： ' . p('option_add') . $nl;
 $b .= 'ご移動手段　　　： ' . p('transport') . $nl;
+$b .= '予約日時　　　　： ' . p('appointment_datetime') . $nl;
 $b .= 'きっかけ　　　　： ' . p('source') . $nl;
 $b .= 'ご質問・ご要望　：' . $nl . p('message') . $nl . $nl;
 
