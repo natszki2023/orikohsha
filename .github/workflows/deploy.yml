@@ -24,4 +24,4 @@ jobs:
           rsync -e "ssh -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" \
           -avz --delete \
           ./ \
-          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USER }}/public_html/
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USER }}/public_html/orikohsha.jp/
