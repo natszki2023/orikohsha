@@ -17,7 +17,33 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SERVER_SSH_KEY }}
-          known_hosts: "unnecessary" # 初回接続の警告をスキップ
+          known_hosts: "unnecessary" # 初回接続の警告をスキップname: Deploy to Onamae Server
+
+on:
+  push:
+    branches:
+      - main # リポジトリがmasterの場合は master に書き換えてください
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy files via rsync
+        run: |
+          rsync -e "ssh -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" \
+          -avz --delete \
+          ./ \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USER }}/public_html/
           if_key_exists: replace
 
       - name: Deploy files via rsync
