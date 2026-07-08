@@ -244,7 +244,7 @@ nav.main .menu-only{display:none}
 /* ===== plan ===== */
 .plan{padding-top:56px;padding-bottom:96px}
 .plan-teaser{max-width:720px;margin:0 auto;text-align:center;background:linear-gradient(180deg,var(--soft),var(--paper));border:1px solid var(--line);border-radius:14px;padding:54px 40px 48px;box-shadow:0 34px 70px -42px rgba(0,0,0,.28)}
-.pt-base{margin-bottom:6px}
+.pt-base{margin-top:24px;margin-bottom:6px}
 .pt-label{font-family:"Noto Serif JP",serif;font-size:14px;letter-spacing:.28em;color:var(--sub)}
 .pt-price{display:flex;align-items:baseline;justify-content:center;gap:6px;line-height:1;margin:6px 0 2px}
 .pt-price b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:clamp(58px,12vw,98px);color:var(--accent);letter-spacing:.01em}
@@ -466,7 +466,7 @@ header{padding:12px 18px}
 <img class="logo-img" src="images/logo.png" alt="織光舎 おりこうしゃ">
 </a>
 <nav class="main" id="nav">
-<a href="https://orikohsha.jp/about.html" class="nav-item"><b>ABOUT</b><span>織光舎について</span></a>
+<a href="about.html" class="nav-item"><b>ABOUT</b><span>織光舎について</span></a>
 <a href="#plan" class="nav-item"><b>PLANS</b><span>料金プラン</span></a>
 <!-- <a href="#journal" class="nav-item"><b>JOURNAL</b><span>ブログ</span></a> Journal一旦非表示 -->
 <a href="#news" class="nav-item"><b>NEWS</b><span>お知らせ</span></a>
@@ -503,11 +503,13 @@ WEBご予約</a>
 <!-- ===== PLAN ===== -->
 <section class="plan wrap" id="plan">
 <div class="sec-head reveal" style="text-align:center">
-<span class="eyebrow">Plan</span>
-<h2>Photo Plan</h2>
-<p class="ja">料金プラン</p>
-</div>
+<h2 class="about-head reveal">泣いてもいい日を、<br class="sp-br">写します。</h2>
+<p class="about-brand reveal">織光舎</p>
 <div class="plan-teaser reveal">
+<figure class="polaroid reveal">
+<img src="images/About_image.webp" alt="織光舎で撮影した家族写真" loading="lazy" decoding="async">
+<p class="about-copy">織光舎（おりこうしゃ）は、お客さまおひとりおひとりの時間と光を、丁寧に織り合わせ、一枚の写真へと残す小さなフォトスタジオです。</p>
+</figure>
 <div class="pt-base">
 <span class="pt-label">基本撮影料</span>
 <div class="pt-price"><b>¥29,800</b><i>〜</i></div>
@@ -519,7 +521,7 @@ WEBご予約</a>
 </div>
 <p class="pt-cond">※所要時間 約50分（お着物レンタル時はお支度込みで約2時間）／データ50カット前後（家族写真10枚を含む）をオンライン納品。</p>
 <a href="https://orikohsha.jp/plans.html" class="pt-btn">料金プランの詳細を見る <span>→</span></a>
-</div>
+</div></div>
 </section>
 
 <!-- プラン詳細は plans.html に移行 -->
@@ -652,7 +654,7 @@ WEB予約
 </a>
 <div class="foot-nav">
 <div class="col"><b>MENU</b>
-<a href="https://orikohsha.jp/about.html">織光舎について</a>
+<a href="about.html">織光舎について</a>
 <a href="https://orikohsha.jp/plans.html">料金プラン</a>
 </div>
 <div class="col"><b>INFO</b>
