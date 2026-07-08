@@ -309,9 +309,9 @@ nav.main .menu-only{display:none}
 
 /* ===== booth ===== */
 .booth{padding-top:96px;padding-bottom:96px}
-.booth-main{aspect-ratio:2/1;overflow:hidden;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.booth-main figure{overflow:hidden;height:100%}
-.booth-main img{width:100%;height:100%;object-fit:cover;transition:.8s}
+.booth-main{aspect-ratio:2/1;overflow:hidden;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.booth-main figure{overflow:hidden;height:100%;min-height:0}
+.booth-main img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:.8s}
 .booth-main figure:hover img{transform:scale(1.03)}
 .booth .title-over{font-family:"Cormorant Garamond",serif;font-size:40px;letter-spacing:.05em;margin-bottom:30px}
 
@@ -427,9 +427,12 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-6.5px) rotate(-45
 .cmp-grid>*,.flow-grid>*,.journal-grid>*{flex:0 0 76%;max-width:300px;scroll-snap-align:start}
 .sp-br{display:inline}
 .about-inner,.access-inner{grid-template-columns:1fr;gap:40px}
-.booth-main{aspect-ratio:3/2;grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+.booth-main{aspect-ratio:auto;grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(220px,1fr));min-height:0}
 .hero::before,.hero::after{display:none}
 .sec-arrows{display:none}
+}
+@media(max-width:540px){
+.booth-main{grid-template-rows:repeat(2,minmax(200px,1fr));gap:12px}
 }
 @media(max-width:700px){
 .scene-grid{grid-template-columns:1fr;height:auto}
