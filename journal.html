@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ブログ一覧｜織光舎｜Journal</title>
+<meta name="description" content="織光舎のブログ一覧ページです。撮影のヒントや撮影レポートをお届けします。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+JP:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3a3733;--sub:#333333;--line:#e3e8ea;--bg:#fbfafa;--paper:#fff;--accent:#6ea3ae;--accent2:#9ec6cf;--accent-soft:#cedee3;--soft:#eaf2f4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans JP",sans-serif;color:var(--ink);background:var(--bg);line-height:1.8;font-weight:300;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button,select,input,textarea{font:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 32px;background:rgba(251,250,250,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.logo img{height:54px;width:auto}
+.back{font-size:13px;letter-spacing:.08em;border:1px solid var(--line);border-radius:30px;padding:10px 18px;background:var(--paper);transition:.3s}
+.back:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hero h1{color:var(--ink)}
+.hero p{color:#5f5a55}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px 80px}
+.hero{padding:72px 0 36px;text-align:center}
+.hero .eyebrow{font-family:"Cormorant Garamond",serif;font-size:13px;letter-spacing:.35em;color:var(--accent);text-transform:uppercase;font-weight:500}
+.hero h1{font-family:"Cormorant Garamond",serif;font-size:46px;font-weight:500;letter-spacing:.04em;margin-top:16px}
+.hero p{font-size:15px;color:var(--sub);margin:18px auto;max-width:720px;line-height:1.9}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:32px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.08)}
+.card .ph{aspect-ratio:4/3;overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:24px 24px 26px}
+.card time{font-family:"Cormorant Garamond",serif;color:var(--accent);font-size:13px;letter-spacing:.06em}
+.card h2{font-size:20px;font-weight:500;line-height:1.5;margin-top:14px;color:var(--ink)}
+.card p{margin-top:14px;font-size:15px;color:#5f5a55;line-height:1.85;min-height:3.9em}
+.no-posts{padding:48px 0;text-align:center;color:var(--sub)}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+@media(max-width:560px){header{flex-direction:column;align-items:flex-start;padding:18px}
+.logo img{height:48px}
+.wrap{padding:0 18px 60px}
+.hero h1{font-size:36px}}
+</style>
+</head>
+<body>
+<header>
+<a href="index.html" class="logo"><img src="images/logo.png" alt="織光舎 おりこうしゃ"></a>
+<a href="index.html" class="back">← トップへ戻る</a>
+</header>
+<section class="wrap">
+<div class="hero">
+<span class="eyebrow">Journal</span>
+<h1>ブログ一覧</h1>
+<p>撮影のヒントやスタジオの近況、特別な日を彩るストーリーをお届けします。</p>
+</div>
+<div id="journalGrid" class="grid"></div>
+<div id="journalEmpty" class="no-posts" style="display:none;">現在、Journalの記事は準備中です。しばらくお待ちください。</div>
+</section>
+<script>
+async function loadJournal(){
+ const container=document.getElementById('journalGrid');
+ const empty=document.getElementById('journalEmpty');
+ try{
+ const res=await fetch('journal-data.json');
+ if(!res.ok) throw new Error('journal-data.json を取得できませんでした');
+ const posts=await res.json();
+ if(!Array.isArray(posts) || !posts.length){
+ container.style.display='none';
+ empty.style.display='block';
+ return;
+ }
+ container.innerHTML=posts.map(post=>`
+ <article class="card">
+ <div class="ph"><img src="${post.image}" alt="${post.alt}"></div>
+ <div class="body">
+ <time>${post.date}</time>
+ <h2>${post.title}</h2>
+ <p>${post.excerpt || ''}</p>
+ </div>
+ </article>
+ `).join('');
+ }catch(err){
+ console.error(err);
+ container.style.display='none';
+ empty.style.display='block';
+ }
+}
+loadJournal();
+</script>
+</body>
+</html>
