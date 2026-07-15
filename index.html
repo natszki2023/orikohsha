@@ -468,7 +468,7 @@ header{padding:12px 18px}
 <nav class="main" id="nav">
 <a href="about.html" class="nav-item"><b>ABOUT</b><span>織光舎について</span></a>
 <a href="#plan" class="nav-item"><b>PLANS</b><span>料金プラン</span></a>
-<a href="journal.html" class="nav-item"><b>JOURNAL</b><span>ブログ</span></a>
+<!-- <a href="#journal" class="nav-item"><b>JOURNAL</b><span>ブログ</span></a> Journal一旦非表示 -->
 <a href="#news" class="nav-item"><b>NEWS</b><span>お知らせ</span></a>
 <a href="#access" class="nav-item"><b>ACCESS</b><span>アクセス</span></a>
 <div class="menu-only">
@@ -565,16 +565,23 @@ WEBご予約</a>
 </ul>
 </section>
 
+<!-- Journal 一旦非表示（コンテンツ準備でき次第 復活）
 <section class="journal" id="journal">
 <div class="row-head reveal">
 <div class="sec-head" style="margin-bottom:0">
 <span class="eyebrow">Journal</span>
 <h2>Journal</h2>
 </div>
-<a href="journal.html" class="more">VIEW MORE &rarr;</a>
+<a href="#" class="more">VIEW MORE &rarr;</a>
 </div>
-<div class="journal-grid reveal" id="journalGrid"></div>
+<div class="journal-grid reveal">
+<article><div class="ph"><img src="images/Journal.webp" alt=""></div><time>2026.06.20</time><h3>桜とともに振袖ロケーション</h3></article>
+<article><div class="ph"><img src="images/FV_IMAGE_01.webp" alt=""></div><time>2026.06.12</time><h3>参道で残す、晴れの日の一枚</h3></article>
+<article><div class="ph"><img src="images/Campaign_01.webp" alt=""></div><time>2026.06.03</time><h3>春の前撮り、衣装選びのポイント</h3></article>
+<article><div class="ph"><img src="images/FV_IMAGE_02.webp" alt=""></div><time>2026.05.25</time><h3>家族写真をもっと自然に撮るコツ</h3></article>
+</div>
 </section>
+-->
 <div style="display:none"></div>
 </div>
 
@@ -651,7 +658,7 @@ WEB予約
 <a href="https://orikohsha.jp/plans.html">料金プラン</a>
 </div>
 <div class="col"><b>INFO</b>
-<a href="journal.html">ブログ</a>
+<!-- <a href="#journal">ブログ</a> Journal一旦非表示 -->
 <a href="#news">お知らせ</a>
 <a href="#access">アクセス</a>
 </div>
@@ -705,24 +712,9 @@ m.querySelector('.pmodal-bg').addEventListener('click',closePmodals);
 m.querySelector('.pmodal-close').addEventListener('click',closePmodals);
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePmodals();});
+</script>
 
-async function loadJournal(){
- const container=document.getElementById('journalGrid');
- if(!container) return;
- try{
- const res=await fetch('journal-data.json');
- if(!res.ok) throw new Error('Journal data not found');
- const posts=await res.json();
- container.innerHTML=posts.map(post=>`
- <article>
- <div class="ph"><img src="${post.image}" alt="${post.alt}" loading="lazy" decoding="async"></div>
- <time>${post.date}</time>
- <h3>${post.title}</h3>
- </article>
- `).join('');
- }catch(err){
- console.error('Journal load failed:', err);
- container.innerHTML='<p>Journal の読み込みに失敗しました。後ほどもう一度お試しください。</p>';
- }
-}
-loadJournal();
+<!-- Sasshi QA Widget -->
+<script async src="https://sasshi-cdn.pages.dev/bootstrap.js" data-pid="orikohsha"></script>
+</body>
+</html>
