@@ -94,8 +94,20 @@ footer a{color:#cfc8bd;text-decoration:none}
   button.submit{width:100%;padding:18px}
 }
 </style>
-<!-- Google reCAPTCHA v2 スクリプト（サイトキーを設定してください） -->
+<!-- Google reCAPTCHA v2 スクリプト -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="config.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var key = window.reserveConfig && window.reserveConfig.recaptchaSiteKey;
+    if (key) {
+      var widget = document.querySelector('.g-recaptcha');
+      if (widget) {
+        widget.setAttribute('data-sitekey', key);
+      }
+    }
+  });
+</script>
 </head>
 <body>
 <header>
@@ -290,7 +302,6 @@ footer a{color:#cfc8bd;text-decoration:none}
   </div>
 
   <div class="submit-wrap">
-    <!-- TODO: 下の data-sitekey を Google reCAPTCHA のサイトキーに置き換えてください -->
     <div style="margin-bottom:14px;">
       <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
     </div>

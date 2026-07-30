@@ -60,9 +60,11 @@ git push
 ## 7. PHP / reCAPTCHA セットアップ
 このサイトでは `reserve.html` から `reserve.php` へのご予約フォーム送信時に Google reCAPTCHA を検証します。本番運用前に以下の設定を必ず行ってください。
 
-1. `reserve.html` の reCAPTCHA ウィジェットに実運用の Site Key を設定します。
-   - `data-sitekey="YOUR_SITE_KEY"` を本番用の Site Key に置き換えてください。
-2. `reserve.php` の `$recaptcha_secret = 'YOUR_SECRET_KEY';` を、実運用の Secret Key に置き換えます。
+1. `config.example.js` を `config.js` にコピーし、`recaptchaSiteKey` に実運用の Site Key を設定します。
+   - `config.js` は本番で HTML から読み込まれ、`reserve.html` の reCAPTCHA ウィジェットに自動で反映されます。
+   - `config.example.js` はリポジトリに含め、実運用キーは `config.js` にのみ保持してください。
+2. `config.example.php` を `config.php` にコピーして、`recaptcha_secret` に実運用の Secret Key を設定します。
+   - `config.php` は `.gitignore` に含まれているため、ソース管理へコミットされません。
 3. PHP の `php.ini` で以下の設定を有効にしておくと安定します。
    - `extension=mbstring`
    - `extension=openssl`

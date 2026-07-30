@@ -13,9 +13,11 @@ $from    = 'contact@orikohsha.jp';        // 送信元（同一ドメイン＝�
 
 /* --- reCAPTCHA 検証（Google reCAPTCHA v2） ---
    1) Google 管理画面でサイト用の Site Key / Secret Key を取得
-   2) 下の $recaptcha_secret を Secret Key に置き換えてください
+   2) `config.example.php` を `config.php` にコピーし、Secret Key を設定してください
 */
-$recaptcha_secret = 'YOUR_SECRET_KEY'; // Google reCAPTCHA Secret Key を設定してください
+$config_path = __DIR__ . '/config.php';
+$config = file_exists($config_path) ? require $config_path : [];
+$recaptcha_secret = isset($config['recaptcha_secret']) ? trim((string)$config['recaptcha_secret']) : 'YOUR_SECRET_KEY';
 $recaptcha_response = isset($_POST['g-recaptcha-response']) ? trim((string)$_POST['g-recaptcha-response']) : '';
 $recaptcha_ok = false;
 if ($recaptcha_response !== '') {
