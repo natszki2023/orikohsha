@@ -57,6 +57,29 @@ git push
 
 ## トップページのリンク更新ワークフロー
 
+## 7. PHP / reCAPTCHA セットアップ
+このサイトでは `reserve.html` から `reserve.php` へのご予約フォーム送信時に Google reCAPTCHA を検証します。本番運用前に以下の設定を必ず行ってください。
+
+1. `reserve.html` の reCAPTCHA ウィジェットに実運用の Site Key を設定します。
+   - `data-sitekey="YOUR_SITE_KEY"` を本番用の Site Key に置き換えてください。
+2. `reserve.php` の `$recaptcha_secret = 'YOUR_SECRET_KEY';` を、実運用の Secret Key に置き換えます。
+3. PHP の `php.ini` で以下の設定を有効にしておくと安定します。
+   - `extension=mbstring`
+   - `extension=openssl`
+   - `date.timezone = "Asia/Tokyo"`
+4. 開発環境で確認する場合は、以下のコマンドでローカルサーバを起動します。
+
+```powershell
+cd C:\Users\bigbe\Documents\Github\orikohsha
+php -S localhost:8000
+```
+
+ブラウザで `http://localhost:8000/reserve.html` を開き、フォーム送信後に `reserve.html?sent=1` へリダイレクトされることを確認してください。
+
+### 本番運用時の注意
+- Google reCAPTCHA のテストキーは本番では使わず、必ず実運用サイトキーとシークレットキーに差し替えてください。
+- メール送信を行う場合、`php.ini` の `SMTP` / `sendmail_path` などの設定も確認してください。
+
 ### いつ更新するか
 - 新しい記事を公開する時。
 - 既存記事を削除・移動したとき（リンク切れを防ぐため）。

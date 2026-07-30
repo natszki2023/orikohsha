@@ -94,6 +94,8 @@ footer a{color:#cfc8bd;text-decoration:none}
   button.submit{width:100%;padding:18px}
 }
 </style>
+<!-- Google reCAPTCHA v2 スクリプト（サイトキーを設定してください） -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 <header>
@@ -288,6 +290,10 @@ footer a{color:#cfc8bd;text-decoration:none}
   </div>
 
   <div class="submit-wrap">
+    <!-- TODO: 下の data-sitekey を Google reCAPTCHA のサイトキーに置き換えてください -->
+    <div style="margin-bottom:14px;">
+      <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+    </div>
     <button type="submit" class="submit">この内容で送信する</button>
     <p class="privacy">ご入力いただいた個人情報は、ご予約対応およびご連絡の目的のみに使用いたします。</p>
   </div>
