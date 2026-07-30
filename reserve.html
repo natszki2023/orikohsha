@@ -94,6 +94,20 @@ footer a{color:#cfc8bd;text-decoration:none}
   button.submit{width:100%;padding:18px}
 }
 </style>
+<!-- Google reCAPTCHA v2 スクリプト -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="config.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var key = window.reserveConfig && window.reserveConfig.recaptchaSiteKey;
+    if (key) {
+      var widget = document.querySelector('.g-recaptcha');
+      if (widget) {
+        widget.setAttribute('data-sitekey', key);
+      }
+    }
+  });
+</script>
 </head>
 <body>
 <header>
@@ -288,6 +302,9 @@ footer a{color:#cfc8bd;text-decoration:none}
   </div>
 
   <div class="submit-wrap">
+    <div style="margin-bottom:14px;">
+      <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+    </div>
     <button type="submit" class="submit">この内容で送信する</button>
     <p class="privacy">ご入力いただいた個人情報は、ご予約対応およびご連絡の目的のみに使用いたします。</p>
   </div>
