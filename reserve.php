@@ -22,29 +22,44 @@ $from    = 'contact@orikohsha.jp';        // 送信元（同一ドメイン＝�
 $config_path = __DIR__ . '/config.php';
 $config = file_exists($config_path) ? require $config_path : [];
 $recaptcha_secret = isset($config['recaptcha_secret']) ? trim((string)$config['recaptcha_secret']) : 'YOUR_SECRET_KEY';
+if ($recaptcha_secret === '' || $recaptcha_secret === 'YOUR_SECRET_KEY') {
+    @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA secret key is missing or placeholder. config.php found: " . (file_exists($config_path) ? 'yes' : 'no') . "\n\n", FILE_APPEND);
+}
 $recaptcha_response = isset($_POST['g-recaptcha-response']) ? trim((string)$_POST['g-recaptcha-response']) : '';
 $recaptcha_ok = false;
 if ($recaptcha_response !== '') {
     $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
     $params = http_build_query(['secret' => $recaptcha_secret, 'response' => $recaptcha_response, 'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '']);
-    if (function_exists('curl_version')) {
+    $http_error = '';
+    $use_curl = function_exists('curl_version') && function_exists('curl_init');
+    if ($use_curl) {
         $ch = curl_init($verify_url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
         $res = curl_exec($ch);
+        if ($res === false) {
+            $http_error = 'cURL error: ' . curl_error($ch) . ' (' . curl_errno($ch) . ')';
+        }
         curl_close($ch);
-    } else {
+    } elseif (ini_get('allow_url_fopen')) {
         $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => "Content-Type: application/x-www-form-urlencoded\r\n", 'content' => $params]]);
         $res = @file_get_contents($verify_url, false, $ctx);
+        if ($res === false) {
+            $err = error_get_last();
+            $http_error = 'file_get_contents error: ' . ($err['message'] ?? 'unknown');
+        }
+    } else {
+        $res = false;
+        $http_error = 'No HTTP transport available: curl unavailable and allow_url_fopen disabled.';
     }
     $json = $res ? json_decode($res, true) : null;
     if ($json && isset($json['success']) && $json['success'] === true) {
         $recaptcha_ok = true;
         @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA verification succeeded\nresponse: " . print_r($json, true) . "\n\n", FILE_APPEND);
     } else {
-        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA siteverify response:\n" . ($res !== false ? $res : 'NO RESPONSE') . "\nparsed JSON: " . print_r($json, true) . "\n\n", FILE_APPEND);
+        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA siteverify response:\n" . ($res !== false ? $res : 'NO RESPONSE') . "\nhttp_error: " . $http_error . "\nopen_ssl: " . (extension_loaded('openssl') ? 'enabled' : 'disabled') . "\nallow_url_fopen: " . (ini_get('allow_url_fopen') ? 'On' : 'Off') . "\ncurl: " . ($use_curl ? 'available' : 'unavailable') . "\nparsed JSON: " . print_r($json, true) . "\n\n", FILE_APPEND);
     }
 }
 if (!$recaptcha_ok) {
