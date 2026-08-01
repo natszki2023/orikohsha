@@ -42,6 +42,9 @@ if ($recaptcha_response !== '') {
     $json = $res ? json_decode($res, true) : null;
     if ($json && isset($json['success']) && $json['success'] === true) {
         $recaptcha_ok = true;
+        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA verification succeeded\nresponse: " . print_r($json, true) . "\n\n", FILE_APPEND);
+    } else {
+        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA siteverify response:\n" . ($res !== false ? $res : 'NO RESPONSE') . "\nparsed JSON: " . print_r($json, true) . "\n\n", FILE_APPEND);
     }
 }
 if (!$recaptcha_ok) {
