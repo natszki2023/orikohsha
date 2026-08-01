@@ -68,7 +68,11 @@ git push
 3. PHP の `php.ini` で以下の設定を有効にしておくと安定します。
    - `extension=mbstring`
    - `extension=openssl`
+   - `extension=curl` (可能な場合)
    - `date.timezone = "Asia/Tokyo"`
+   - `allow_url_fopen = On` (cURL 未使用時)
+
+   本番環境では `php -m` に `openssl` と `curl` が含まれていることを確認してください。HTTPS の siteverify リクエストはこれらの拡張機能のいずれかが必要です。
 4. 開発環境で確認する場合は、以下のコマンドでローカルサーバを起動します。
 
 ```powershell

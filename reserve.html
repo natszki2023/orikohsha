@@ -98,25 +98,43 @@ footer a{color:#cfc8bd;text-decoration:none}
 <script src="config.js"></script>
 <script>
   (function () {
+    var recaptchaWidgetId = null;
+
+    function renderRecaptcha(key) {
+      var widget = document.querySelector('.g-recaptcha');
+      if (!widget || typeof grecaptcha === 'undefined') {
+        return;
+      }
+      if (recaptchaWidgetId !== null) {
+        return;
+      }
+      recaptchaWidgetId = grecaptcha.render(widget, {
+        sitekey: key,
+      });
+    }
+
     function initRecaptcha() {
       try {
         var key = window.reserveConfig && window.reserveConfig.recaptchaSiteKey;
-        if (!key) return;
-        var widget = document.querySelector('.g-recaptcha');
-        if (widget) {
-          widget.setAttribute('data-sitekey', key);
+        if (!key) {
+          console.warn('reCAPTCHA site key is not set.');
+          return;
         }
-        if (typeof grecaptcha === 'undefined') {
-          var script = document.createElement('script');
-          script.src = 'https://www.google.com/recaptcha/api.js';
-          script.async = true;
-          script.defer = true;
-          document.head.appendChild(script);
-        }
+
+        var script = document.createElement('script');
+        script.src = 'https://www.google.com/recaptcha/api.js?onload=reserveRecaptchaLoaded&render=explicit';
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+
+        window.reserveRecaptchaLoaded = function () {
+          renderRecaptcha(key);
+        };
       } catch (e) {
         console.error(e);
       }
     }
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initRecaptcha);
     } else {
