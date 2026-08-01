@@ -6,6 +6,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Debug: log raw POST payload and parsed POST for troubleshooting missing fields
+@file_put_contents(__DIR__ . '/reserve_post_raw.log', "[" . date('c') . "] RAW INPUT:\n" . file_get_contents('php://input') . "\n\n", FILE_APPEND);
+@file_put_contents(__DIR__ . '/reserve_post_parsed.log', "[" . date('c') . "] \\$_POST:\n" . print_r($_POST, true) . "\n\n", FILE_APPEND);
+
 function p($k){ return isset($_POST[$k]) ? trim((string)$_POST[$k]) : ''; }
 
 $to      = 'contact@orikohsha.jp';
@@ -41,6 +45,7 @@ if ($recaptcha_response !== '') {
     }
 }
 if (!$recaptcha_ok) {
+    @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA verification failed\nPOST: " . print_r($_POST, true) . "\n\n", FILE_APPEND);
     header('Location: reserve.html?error=1');
     exit;
 }
@@ -51,6 +56,9 @@ $ok = true;
 foreach ($required as $r) { if (p($r) === '') { $ok = false; break; } }
 if (!filter_var(p('email'), FILTER_VALIDATE_EMAIL)) { $ok = false; }
 if (!$ok) {
+    $missing = [];
+    foreach ($required as $r) { if (p($r) === '') $missing[] = $r; }
+    @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] Required fields missing: " . implode(',', $missing) . "\nPOST: " . print_r($_POST, true) . "\n\n", FILE_APPEND);
     header('Location: reserve.html?error=1');
     exit;
 }
@@ -90,10 +98,14 @@ $b .= '送信元IP： ' . ($_SERVER['REMOTE_ADDR'] ?? '') . $nl;
 
 $subject = '【織光舎】ご予約フォーム送信：' . p('name_kanji') . ' 様';
 
-$from_name = function_exists('mb_encode_mimeheader') ? mb_encode_mimeheader('織光舎 予約フォーム') : '織光舎 予約フォーム';
+$from_name = '織光舎 予約フォーム';
+if (is_callable('mb_encode_mimeheader')) {
+    $tmp = mb_encode_mimeheader('織光舎 予約フォーム');
+    if ($tmp) $from_name = $tmp;
+}
 $headers  = 'From: ' . $from_name . ' <' . $from . '>' . $nl;
 $headers .= 'Reply-To: ' . p('email');
-if (function_exists('mb_send_mail')) {
+if (is_callable('mb_send_mail')) {
     $sent = mb_send_mail($to, $subject, $b, $headers);
 } else {
     $sent = mail($to, $subject, $b, $headers);
@@ -106,9 +118,13 @@ if ($sent) {
     $ab .= '以下の内容で承りました。担当者より折り返しご連絡を差し上げますので、今しばらくお待ちくださいませ。' . $nl . $nl;
     $ab .= $b;
     $ab .= $nl . '───────────────' . $nl . '織光舎（おりこうしゃ）' . $nl . 'contact@orikohsha.jp' . $nl;
-    $reply_from = function_exists('mb_encode_mimeheader') ? mb_encode_mimeheader('織光舎') : '織光舎';
+    $reply_from = '織光舎';
+    if (is_callable('mb_encode_mimeheader')) {
+        $tmp = mb_encode_mimeheader('織光舎');
+        if ($tmp) $reply_from = $tmp;
+    }
     $ah  = 'From: ' . $reply_from . ' <' . $from . '>' . $nl . 'Reply-To: ' . $from;
-    if (function_exists('mb_send_mail')) {
+    if (is_callable('mb_send_mail')) {
         @mb_send_mail(p('email'), '【織光舎】ご予約を承りました', $ab, $ah);
     } else {
         @mail(p('email'), '【織光舎】ご予約を承りました', $ab, $ah);
