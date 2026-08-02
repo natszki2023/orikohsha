@@ -1,5 +1,4 @@
-// Temporary: testing with Google reCAPTCHA v2 test Site Key
-// Replace with production Site Key after verification
+// Copy this file to config.js and replace the test value with your production Google reCAPTCHA Site Key.
 window.reserveConfig = {
-    recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    recaptchaSiteKey: '6LfELW0tAAAAAEqA7ZyFm_tFc8aagf3AEIUoEyAn',
 };
