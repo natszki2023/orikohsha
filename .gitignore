@@ -1,2 +1,10 @@
 # Local secret configuration
 config.php
+
+# Local debugging and temporary runtime artifacts
+reserve_debug.log
+reserve_post_raw.log
+reserve_post_parsed.log
+reserve_mail.log
+*.tmp
+*.log
