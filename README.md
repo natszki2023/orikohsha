@@ -1,3 +1,4 @@
+
 # 織光舎 Website — Journal 記事追加手順
 
 このリポジトリでは、ジャーナル記事を `journal/` フォルダ内に HTML ファイルとして追加し、トップページの `#journal` セクションにカードを置いてリンクする運用を推奨します。
@@ -60,31 +61,74 @@ git push
 ## 7. PHP / reCAPTCHA セットアップ
 このサイトでは `reserve.html` から `reserve.php` へのご予約フォーム送信時に Google reCAPTCHA を検証します。本番運用前に以下の設定を必ず行ってください。
 
-1. `config.example.js` を `config.js` にコピーし、`recaptchaSiteKey` に実運用の Site Key を設定します。
-   - `config.js` は本番で HTML から読み込まれ、`reserve.html` の reCAPTCHA ウィジェットに自動で反映されます。
-   - `config.example.js` はリポジトリに含め、実運用キーは `config.js` にのみ保持してください。
-2. `config.example.php` を `config.php` にコピーして、`recaptcha_secret` に実運用の Secret Key を設定します。
+### 7-1. reCAPTCHA の本番キーを設定する
+1. Google reCAPTCHA 管理画面で「v2 / チェックボックス型」のサイトキーとシークレットキーを取得します。
+2. `config.example.js` を `config.js` にコピーし、`recaptchaSiteKey` に本番の Site Key を設定します。
+   - `config.js` は HTML から読み込まれ、`reserve.html` の reCAPTCHA ウィジェットに反映されます。
+   - 実運用キーは `config.js` にのみ保持してください。
+3. `config.example.php` を `config.php` にコピーし、`recaptcha_secret` に本番の Secret Key を設定します。
    - `config.php` は `.gitignore` に含まれているため、ソース管理へコミットされません。
-3. PHP の `php.ini` で以下の設定を有効にしておくと安定します。
-   - `extension=mbstring`
-   - `extension=openssl`
-   - `extension=curl` (可能な場合)
-   - `date.timezone = "Asia/Tokyo"`
-   - `allow_url_fopen = On` (cURL 未使用時)
+4. テスト中のキーを使っている場合は、必ず本番用のキーへ差し替えてください。
 
-   本番環境では `php -m` に `openssl` と `curl` が含まれていることを確認してください。HTTPS の siteverify リクエストはこれらの拡張機能のいずれかが必要です。
-4. 開発環境で確認する場合は、以下のコマンドでローカルサーバを起動します。
+### 7-2. PHP の必須拡張を確認する
+本番環境では、PHP が HTTPS の `siteverify` リクエストを実行できるようにしておきます。
+
+`php.ini` で次を確認・設定してください。
+
+```ini
+extension=mbstring
+extension=openssl
+extension=curl
+
+; 日本時間で扱う場合
+date.timezone = "Asia/Tokyo"
+
+; cURL を使わない場合のフォールバック
+allow_url_fopen = On
+```
+
+確認コマンド:
+
+```bash
+php -m | grep -E 'mbstring|openssl|curl'
+php -i | grep -E 'curl|openssl|date\.timezone|allow_url_fopen'
+```
+
+### 7-3. メール送信設定を確認する
+本番環境では、PHP からメールを送るために SMTP もしくは sendmail の設定が必要です。
+
+代表的な設定例:
+
+```ini
+SMTP = smtp.example.com
+smtp_port = 587
+sendmail_path = "/usr/sbin/sendmail -t -i"
+```
+
+または、運用環境のメール送信サービスに合わせて `sendmail_path` または SMTP 設定を行ってください。
+
+### 7-4. ローカル確認手順
+開発環境で確認する場合は、次のコマンドでローカルサーバを起動します。
 
 ```powershell
 cd C:\Users\bigbe\Documents\Github\orikohsha
 php -S localhost:8000
 ```
 
-ブラウザで `http://localhost:8000/reserve.html` を開き、フォーム送信後に `reserve.html?sent=1` へリダイレクトされることを確認してください。
+ブラウザで `http://localhost:8000/reserve.html` を開き、フォーム送信後に `reserve.html?sent=1` にリダイレクトされることを確認してください。
+
+### 7-5. 本番デプロイ前のチェックリスト
+- [ ] `config.js` に本番 Site Key を設定した
+- [ ] `config.php` に本番 Secret Key を設定した
+- [ ] `php.ini` で `mbstring` / `openssl` / `curl` を有効化した
+- [ ] `date.timezone` を `Asia/Tokyo` に設定した
+- [ ] メール送信（SMTP / sendmail）を本番環境で動くようにした
+- [ ] 実際のフォーム送信で `reserve.html?sent=1` が返ることを確認した
 
 ### 本番運用時の注意
 - Google reCAPTCHA のテストキーは本番では使わず、必ず実運用サイトキーとシークレットキーに差し替えてください。
 - メール送信を行う場合、`php.ini` の `SMTP` / `sendmail_path` などの設定も確認してください。
+- 本番環境では `reserve.php` が実際に送信できることを、実際の入力で確認してください。
 
 ### いつ更新するか
 - 新しい記事を公開する時。

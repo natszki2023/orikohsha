@@ -12,6 +12,90 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 function p($k){ return isset($_POST[$k]) ? trim((string)$_POST[$k]) : ''; }
 
+function is_local_environment() {
+    $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? '');
+    $remote = $_SERVER['REMOTE_ADDR'] ?? '';
+    return $host === 'localhost' || $host === '127.0.0.1' || $host === '::1' || $remote === '127.0.0.1' || $remote === '::1';
+}
+
+function send_mail_with_fallback($to, $subject, $body, $headers) {
+    $sent = false;
+    $mail_error = null;
+
+    if (function_exists('mb_send_mail')) {
+        $sent = @mb_send_mail($to, $subject, $body, $headers);
+        if (!$sent) {
+            $mail_error = 'mb_send_mail failed';
+        }
+    } else {
+        $sent = @mail($to, $subject, $body, $headers);
+        if (!$sent) {
+            $mail_error = 'mail() failed';
+        }
+    }
+
+    if ($sent) {
+        return true;
+    }
+
+    if (is_local_environment()) {
+        $fallback_path = __DIR__ . '/reserve_mail.log';
+        $payload = [
+            'timestamp' => date('c'),
+            'to' => $to,
+            'subject' => $subject,
+            'headers' => $headers,
+            'body' => $body,
+            'mail_error' => $mail_error,
+            'php_sapi' => PHP_SAPI,
+            'remote_addr' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ];
+        @file_put_contents($fallback_path, print_r($payload, true) . "\n---\n", FILE_APPEND);
+        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] Mail delivery failed; saved a local fallback copy to reserve_mail.log\n" . print_r($payload, true) . "\n\n", FILE_APPEND);
+        return true;
+    }
+
+    @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] Mail delivery failed\n" . ($mail_error ?? 'unknown') . "\n\n", FILE_APPEND);
+    return false;
+}
+
+function resolve_ca_bundle_path() {
+    $candidates = [];
+
+    foreach (['SSL_CERT_FILE', 'CURL_CA_BUNDLE'] as $name) {
+        $value = getenv($name);
+        if (is_string($value) && $value !== '') {
+            $candidates[] = $value;
+        }
+    }
+
+    foreach ([ini_get('curl.cainfo'), ini_get('openssl.cafile')] as $value) {
+        if (is_string($value) && $value !== '') {
+            $candidates[] = $value;
+        }
+    }
+
+    $user = getenv('USERNAME') ?: getenv('USER');
+    $windows_candidates = [
+        'C:/Program Files/Git/usr/ssl/certs/ca-bundle.crt',
+        'C:/Program Files/Git/usr/ssl/certs/ca-bundle.trust.crt',
+        'C:/Program Files/Git/mingw64/ssl/certs/ca-bundle.crt',
+        'C:/Program Files/Git/mingw64/ssl/certs/ca-bundle.trust.crt',
+        'C:/Users/' . $user . '/AppData/Local/Programs/Git/usr/ssl/certs/ca-bundle.crt',
+        'C:/Users/' . $user . '/AppData/Local/Programs/Git/usr/ssl/certs/ca-bundle.trust.crt',
+        'C:/Users/' . $user . '/AppData/Local/Programs/Git/mingw64/ssl/certs/ca-bundle.crt',
+        'C:/Users/' . $user . '/AppData/Local/Programs/Git/mingw64/ssl/certs/ca-bundle.trust.crt',
+    ];
+
+    foreach (array_merge($candidates, $windows_candidates) as $candidate) {
+        if (is_string($candidate) && $candidate !== '' && is_file($candidate)) {
+            return $candidate;
+        }
+    }
+
+    return null;
+}
+
 $to      = 'contact@orikohsha.jp';
 $from    = 'contact@orikohsha.jp';        // 送信元（同一ドメイン＝到達性◎）
 
@@ -33,11 +117,16 @@ if ($recaptcha_response !== '') {
     $http_error = '';
     $use_curl = function_exists('curl_version') && function_exists('curl_init');
     if ($use_curl) {
+        $ca_bundle = resolve_ca_bundle_path();
         $ch = curl_init($verify_url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+        if ($ca_bundle !== null) {
+            curl_setopt($ch, CURLOPT_CAINFO, $ca_bundle);
+            curl_setopt($ch, CURLOPT_CAPATH, dirname($ca_bundle));
+        }
         $res = curl_exec($ch);
         if ($res === false) {
             $http_error = 'cURL error: ' . curl_error($ch) . ' (' . curl_errno($ch) . ')';
@@ -59,7 +148,7 @@ if ($recaptcha_response !== '') {
         $recaptcha_ok = true;
         @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA verification succeeded\nresponse: " . print_r($json, true) . "\n\n", FILE_APPEND);
     } else {
-        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA siteverify response:\n" . ($res !== false ? $res : 'NO RESPONSE') . "\nhttp_error: " . $http_error . "\nopen_ssl: " . (extension_loaded('openssl') ? 'enabled' : 'disabled') . "\nallow_url_fopen: " . (ini_get('allow_url_fopen') ? 'On' : 'Off') . "\ncurl: " . ($use_curl ? 'available' : 'unavailable') . "\nparsed JSON: " . print_r($json, true) . "\n\n", FILE_APPEND);
+        @file_put_contents(__DIR__ . '/reserve_debug.log', "[" . date('c') . "] reCAPTCHA siteverify response:\n" . ($res !== false ? $res : 'NO RESPONSE') . "\nhttp_error: " . $http_error . "\nopen_ssl: " . (extension_loaded('openssl') ? 'enabled' : 'disabled') . "\nallow_url_fopen: " . (ini_get('allow_url_fopen') ? 'On' : 'Off') . "\ncurl: " . ($use_curl ? 'available' : 'unavailable') . "\nca_bundle: " . (resolve_ca_bundle_path() ?? 'not-found') . "\nparsed JSON: " . print_r($json, true) . "\n\n", FILE_APPEND);
     }
 }
 if (!$recaptcha_ok) {
@@ -123,11 +212,7 @@ if (is_callable('mb_encode_mimeheader')) {
 }
 $headers  = 'From: ' . $from_name . ' <' . $from . '>' . $nl;
 $headers .= 'Reply-To: ' . p('email');
-if (is_callable('mb_send_mail')) {
-    $sent = mb_send_mail($to, $subject, $b, $headers);
-} else {
-    $sent = mail($to, $subject, $b, $headers);
-}
+$sent = send_mail_with_fallback($to, $subject, $b, $headers);
 
 /* お客様への自動返信（任意・控え） */
 if ($sent) {
@@ -142,11 +227,7 @@ if ($sent) {
         if ($tmp) $reply_from = $tmp;
     }
     $ah  = 'From: ' . $reply_from . ' <' . $from . '>' . $nl . 'Reply-To: ' . $from;
-    if (is_callable('mb_send_mail')) {
-        @mb_send_mail(p('email'), '【織光舎】ご予約を承りました', $ab, $ah);
-    } else {
-        @mail(p('email'), '【織光舎】ご予約を承りました', $ab, $ah);
-    }
+    send_mail_with_fallback(p('email'), '【織光舎】ご予約を承りました', $ab, $ah);
 }
 
 header('Location: reserve.html?' . ($sent ? 'sent=1' : 'error=1'));
