@@ -71,8 +71,13 @@ $message = contact_value('message');
 $types = isset($_POST['inquiry_type']) && is_array($_POST['inquiry_type']) ? array_map('trim', $_POST['inquiry_type']) : [];
 $messageLength = contact_length($message);
 
-if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $message === '' || $messageLength > 3000 || !contact_verify_recaptcha($secret, contact_value('g-recaptcha-response'))) {
-    header('Location: contact.html?error=1');
+if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $message === '' || $messageLength > 3000) {
+    header('Location: contact.html?error=validation');
+    exit;
+}
+
+if (!contact_verify_recaptcha($secret, contact_value('g-recaptcha-response'))) {
+    header('Location: contact.html?error=recaptcha');
     exit;
 }
 
