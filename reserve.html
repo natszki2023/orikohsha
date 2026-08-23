@@ -164,12 +164,18 @@ footer a{color:#cfc8bd;text-decoration:none}
   <div class="fsec">
     <div class="fsec-head"><span class="no">01</span><h2>お客様情報</h2></div>
     <div class="field">
-      <label class="lbl" for="name_kanji">お名前（漢字）<span class="req">必須</span></label>
-      <input type="text" id="name_kanji" name="name_kanji" placeholder="織光 花子" required>
+      <label class="lbl">お名前（漢字）<span class="req">必須</span></label>
+      <div class="row2">
+        <input type="text" id="name_kanji_last" name="name_kanji_last" placeholder="姓（例：織光）" required>
+        <input type="text" id="name_kanji_first" name="name_kanji_first" placeholder="名（例：花子）" required>
+      </div>
     </div>
     <div class="field">
-      <label class="lbl" for="name_kana">フリガナ（お名前）<span class="req">必須</span></label>
-      <input type="text" id="name_kana" name="name_kana" placeholder="オリコウ ハナコ" required>
+      <label class="lbl">フリガナ<span class="req">必須</span></label>
+      <div class="row2">
+        <input type="text" id="name_kana_last" name="name_kana_last" placeholder="セイ（例：オリコウ）" required>
+        <input type="text" id="name_kana_first" name="name_kana_first" placeholder="メイ（例：ハナコ）" required>
+      </div>
     </div>
     <div class="field">
       <label class="lbl" for="zip">郵便番号<span class="req">必須</span></label>
@@ -222,11 +228,41 @@ footer a{color:#cfc8bd;text-decoration:none}
         </div>
       </div>
     </div>
+    <div class="field">
+      <label class="lbl">ご撮影対象の追加（ソロショットをご希望のお子様など） <span class="opt">任意</span></label>
+      <div class="choices">
+        <label class="choice has-input"><input type="radio" name="option_add" value="追加なし" checked>追加なし</label>
+        <label class="choice has-input"><input type="radio" name="option_add" value="追加1人（20カット追加）">追加 1人（20カット追加）<span class="price">¥8,800</span></label>
+        <label class="choice has-input"><input type="radio" name="option_add" value="追加2人（40カット追加）">追加 2人（40カット追加）<span class="price">¥17,600</span></label>
+      </div>
+      <p class="hint">※お友達同士やいとこのお子様の追加はご遠慮いただいております。<br>※「七五三撮影」と「お宮参り撮影」の双方をご希望の場合は、ごきょうだい追加料金が必要となります。</p>
+    </div>
   </div>
 
-  <!-- 3. 希望日時 -->
+  <!-- 3. 撮影プラン -->
   <div class="fsec">
-    <div class="fsec-head"><span class="no">03</span><h2>希望日時</h2></div>
+    <div class="fsec-head"><span class="no">03</span><h2>撮影プラン</h2></div>
+    <div class="field">
+      <label class="lbl">撮影プラン <span class="req">必須</span></label>
+      <div class="choices">
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="七五三｜神社＋スタジオプラン" required>七五三｜神社＋スタジオプラン<span class="price">¥39,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="七五三｜スタジオ撮影のみ">七五三｜スタジオ撮影のみ<span class="price">¥34,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="お宮参り｜神社＋スタジオプラン">お宮参り｜神社＋スタジオプラン<span class="price">¥35,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="お宮参り｜スタジオ撮影のみ">お宮参り｜スタジオ撮影のみ<span class="price">¥32,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="フォトプラン｜出張＋スタジオ撮影">フォトプラン｜出張＋スタジオ撮影<span class="price">¥29,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="フォトプラン｜出張撮影のみ">フォトプラン｜出張撮影のみ<span class="price">¥24,800（税抜）</span></label>
+        <label class="choice has-input"><input type="radio" name="shoot_plan" value="フォトプラン｜スタジオ撮影のみ">フォトプラン｜スタジオ撮影のみ<span class="price">¥19,800（税抜）</span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="coupon_code">クーポンコード <span class="opt">任意</span></label>
+      <input type="text" id="coupon_code" name="coupon_code" placeholder="クーポンをお持ちの方はご入力ください">
+    </div>
+  </div>
+
+  <!-- 4. 希望日時 -->
+  <div class="fsec">
+    <div class="fsec-head"><span class="no">04</span><h2>希望日時</h2></div>
     <div class="field">
       <label class="lbl" for="appointment_date">ご希望日時 <span class="req">必須</span></label>
       <div class="datetime-grid">
@@ -249,19 +285,9 @@ footer a{color:#cfc8bd;text-decoration:none}
     </div>
   </div>
 
-  <!-- 4. オプション・アンケート -->
+  <!-- 5. オプション・アンケート -->
   <div class="fsec">
-    <div class="fsec-head"><span class="no">04</span><h2>オプション・アンケート</h2></div>
-
-    <div class="field">
-      <label class="lbl">ご撮影対象の追加（ソロショットをご希望のお子様など） <span class="opt">任意</span></label>
-      <div class="choices">
-        <label class="choice has-input"><input type="radio" name="option_add" value="追加なし" checked>追加なし</label>
-        <label class="choice has-input"><input type="radio" name="option_add" value="追加1人（20カット追加）">追加 1人（20カット追加）<span class="price">¥8,800</span></label>
-        <label class="choice has-input"><input type="radio" name="option_add" value="追加2人（40カット追加）">追加 2人（40カット追加）<span class="price">¥17,600</span></label>
-      </div>
-      <p class="hint">※お友達同士やいとこのお子様の追加はご遠慮いただいております。<br>※「七五三撮影」と「お宮参り撮影」の双方をご希望の場合は、ごきょうだい追加料金が必要となります。</p>
-    </div>
+    <div class="fsec-head"><span class="no">05</span><h2>オプション・アンケート</h2></div>
 
     <div class="field">
       <label class="lbl">ご来店・神社へのご移動手段 <span class="opt">任意</span></label>
@@ -292,9 +318,9 @@ footer a{color:#cfc8bd;text-decoration:none}
     </div>
   </div>
 
-  <!-- 5. 大切なご案内 -->
+  <!-- 6. 大切なご案内 -->
   <div class="fsec">
-    <div class="fsec-head"><span class="no">05</span><h2>ご撮影に関する大切なご案内</h2></div>
+    <div class="fsec-head"><span class="no">06</span><h2>ご撮影に関する大切なご案内</h2></div>
     <div class="notice">
       <div class="notice-item">
         <span class="notice-ico"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h1.6l1-1.6a1 1 0 0 1 .85-.4h5.1a1 1 0 0 1 .85.4l1 1.6H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.4"/></svg></span>
@@ -352,12 +378,66 @@ footer a{color:#cfc8bd;text-decoration:none}
 <script>
 (function(){
   var q=new URLSearchParams(location.search), slot=document.getElementById('alertSlot');
+  var form=document.getElementById('reserveForm');
+  var draftKey='reserveFormDraft.v2';
+
+  function saveDraft(){
+    if(!form) return;
+    var data={};
+    var fields=form.querySelectorAll('input,select,textarea');
+    fields.forEach(function(el){
+      if(!el.name || el.type==='submit' || el.type==='button') return;
+      if(el.type==='radio'){
+        if(el.checked) data[el.name]=el.value;
+        return;
+      }
+      if(el.type==='checkbox'){
+        data[el.name]=el.checked ? el.value : '';
+        return;
+      }
+      data[el.name]=el.value;
+    });
+    sessionStorage.setItem(draftKey, JSON.stringify(data));
+  }
+
+  function restoreDraft(){
+    if(!form) return;
+    var raw=sessionStorage.getItem(draftKey);
+    if(!raw) return;
+    try{
+      var data=JSON.parse(raw);
+      Object.keys(data).forEach(function(name){
+        var els=form.querySelectorAll('[name="'+name+'"]');
+        if(!els.length) return;
+        var first=els[0];
+        if(first.type==='radio'){
+          els.forEach(function(el){ el.checked=(el.value===data[name]); });
+          return;
+        }
+        if(first.type==='checkbox'){
+          first.checked=(data[name]===first.value);
+          return;
+        }
+        first.value=data[name] || '';
+      });
+    }catch(e){
+      console.error(e);
+    }
+  }
+
   if(q.get('sent')==='1'){
+    sessionStorage.removeItem(draftKey);
     slot.innerHTML='<div class="alert ok">ご予約フォームを送信いたしました。担当者より折り返しご連絡を差し上げますので、今しばらくお待ちくださいませ。</div>';
-    var f=document.getElementById('reserveForm'); if(f) f.style.display='none';
+    if(form) form.style.display='none';
     window.scrollTo({top:0});
   } else if(q.get('error')==='1'){
     slot.innerHTML='<div class="alert ng">必須項目が未入力か、メールアドレスの形式に誤りがあります。お手数ですが内容をご確認の上、再度送信してください。</div>';
+    restoreDraft();
+  }
+
+  if(form){
+    form.addEventListener('input', saveDraft);
+    form.addEventListener('change', saveDraft);
   }
 })();
 
@@ -386,7 +466,10 @@ footer a{color:#cfc8bd;text-decoration:none}
     if(!hiddenInput.value){
       e.preventDefault();
       alert('ご希望日時を選択してください。');
+      return;
     }
+    var triggerChange=new Event('change', { bubbles: true });
+    form.dispatchEvent(triggerChange);
   });
 })();
 </script>
