@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 function p($k){ return isset($_POST[$k]) ? trim((string)$_POST[$k]) : ''; }
 
+$customer_name_kanji = trim(p('name_kanji_last') . ' ' . p('name_kanji_first'));
+$customer_name_kana = trim(p('name_kana_last') . ' ' . p('name_kana_first'));
+
 function is_local_environment() {
     $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? '');
     $remote = $_SERVER['REMOTE_ADDR'] ?? '';
@@ -158,7 +161,7 @@ if (!$recaptcha_ok) {
 }
 
 /* 必須チェック */
-$required = ['name_kanji','name_kana','zip','address','tel','email','star_name','appointment_datetime','source','agree'];
+$required = ['name_kanji_last','name_kanji_first','name_kana_last','name_kana_first','zip','address','tel','email','star_name','shoot_plan','appointment_datetime','source','agree'];
 $ok = true;
 foreach ($required as $r) { if (p($r) === '') { $ok = false; break; } }
 if (!filter_var(p('email'), FILTER_VALIDATE_EMAIL)) { $ok = false; }
@@ -176,8 +179,12 @@ $line = str_repeat('-', 40);
 $b  = '織光舎 ご予約フォームより、お申し込みがありました。' . $nl . $nl;
 
 $b .= '■ お客様情報' . $nl . $line . $nl;
-$b .= 'お名前（漢字）　： ' . p('name_kanji') . $nl;
-$b .= 'フリガナ　　　　： ' . p('name_kana') . $nl;
+$b .= 'お名前（漢字）　： ' . $customer_name_kanji . $nl;
+$b .= '　姓　　　　　　： ' . p('name_kanji_last') . $nl;
+$b .= '　名　　　　　　： ' . p('name_kanji_first') . $nl;
+$b .= 'フリガナ　　　　： ' . $customer_name_kana . $nl;
+$b .= '　セイ　　　　　： ' . p('name_kana_last') . $nl;
+$b .= '　メイ　　　　　： ' . p('name_kana_first') . $nl;
 $b .= '郵便番号　　　　： ' . p('zip') . $nl;
 $b .= 'ご住所　　　　　： ' . p('address') . $nl;
 $b .= 'お電話番号　　　： ' . p('tel') . $nl;
@@ -189,6 +196,10 @@ $b .= '年齢　　　　　　　： ' . p('star_age') . $nl;
 $b .= '性別　　　　　　　： ' . p('star_gender') . $nl;
 $b .= 'お誕生日　　　　　： ' . p('star_birthday') . $nl;
 $b .= '好きなキャラクター： ' . p('star_character') . $nl . $nl;
+
+$b .= '■ 撮影プラン' . $nl . $line . $nl;
+$b .= '撮影プラン　　　： ' . p('shoot_plan') . $nl . $nl;
+$b .= 'クーポンコード　： ' . p('coupon_code') . $nl . $nl;
 
 $b .= '■ 希望日時' . $nl . $line . $nl;
 $b .= 'ご希望日時　　　： ' . p('appointment_datetime') . $nl . $nl;
@@ -203,7 +214,7 @@ $b .= $line . $nl;
 $b .= '送信日時： ' . date('Y-m-d H:i:s') . $nl;
 $b .= '送信元IP： ' . ($_SERVER['REMOTE_ADDR'] ?? '') . $nl;
 
-$subject = '【織光舎】ご予約フォーム送信：' . p('name_kanji') . ' 様';
+$subject = '【織光舎】ご予約フォーム送信：' . $customer_name_kanji . ' 様';
 
 $from_name = '織光舎 予約フォーム';
 if (is_callable('mb_encode_mimeheader')) {
@@ -216,7 +227,7 @@ $sent = send_mail_with_fallback($to, $subject, $b, $headers);
 
 /* お客様への自動返信（任意・控え） */
 if ($sent) {
-    $ab  = p('name_kanji') . ' 様' . $nl . $nl;
+    $ab  = $customer_name_kanji . ' 様' . $nl . $nl;
     $ab .= 'この度は織光舎へご予約フォームをお送りいただき、誠にありがとうございます。' . $nl;
     $ab .= '以下の内容で承りました。担当者より折り返しご連絡を差し上げますので、今しばらくお待ちくださいませ。' . $nl . $nl;
     $ab .= $b;
